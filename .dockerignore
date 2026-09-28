@@ -1,0 +1,14 @@
+node_modules
+npm-debug.log
+.env
+.env.*
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
+coverage
+logs
+*.log
+.DS_Store
+
+qio-project-firebase-adminsdk-*.json

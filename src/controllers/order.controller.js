@@ -4,6 +4,7 @@ const ApiResponse = require('../utils/ApiResponse');
 const Order = require('../models/Order');
 const Address = require('../models/Address');
 const Product = require('../models/Product');
+const Wallet = require('../models/Wallet');
 const {
   serializeOrder,
   serializeOrderLine,
@@ -166,6 +167,12 @@ const createOrder = asyncHandler(async (req, res) => {
 
   const { vat, shippingFee, discount, total } = computeTotals(subtotal, discountAmount);
 
+  // Check wallet balance BEFORE creating order
+  const wallet = await Wallet.findOne({ user: req.user._id });
+  if (!wallet || wallet.balance < total) {
+    throw new ApiError(400, 'Insufficient wallet balance');
+  }
+
   let orderNumber = generateOrderNumber();
   // rare collision retry
   for (let i = 0; i < 5; i += 1) {
@@ -174,12 +181,6 @@ const createOrder = asyncHandler(async (req, res) => {
     if (!exists) break;
     orderNumber = generateOrderNumber();
   }
-
-  await applyWalletChange(req.user._id, {
-    amount: total,
-    type: 'debit',
-    title: `Order #${orderNumber}`,
-  });
 
   // Update streak for successful order
   await updateStreak(req.user._id);
@@ -205,6 +206,13 @@ const createOrder = asyncHandler(async (req, res) => {
     shippingFee,
     total,
     status: 'Packing',
+  });
+
+  // Deduct from wallet AFTER order is created
+  await applyWalletChange(req.user._id, {
+    amount: total,
+    type: 'debit',
+    title: `Order #${orderNumber}`,
   });
 
   if (cart) {

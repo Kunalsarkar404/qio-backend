@@ -77,6 +77,22 @@ const userSchema = new mongoose.Schema(
       count: { type: Number, default: 0, min: 0 },
       lastActivityDate: { type: Date, default: null },
     },
+    referralCode: {
+      type: String,
+      unique: true,
+      sparse: true,
+      trim: true,
+    },
+    referredBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
+    referralRewardsEarned: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
   },
   { timestamps: true },
 );

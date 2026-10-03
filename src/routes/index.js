@@ -9,6 +9,7 @@ const orderRoutes = require('./order.routes');
 const adminRoutes = require('./admin.routes');
 const brandRoutes = require('./brand.routes');
 const streakRoutes = require('./streak.routes');
+const referralRoutes = require('./referral.routes');
 
 const router = Router();
 
@@ -25,6 +26,7 @@ router.use('/wallet', walletRoutes);
 router.use('/orders', orderRoutes);
 router.use('/brands', brandRoutes);
 router.use('/streak', streakRoutes);
+router.use('/referral', referralRoutes);
 router.use('/admin', adminRoutes);
 
 module.exports = router;

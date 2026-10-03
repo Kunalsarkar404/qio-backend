@@ -7,7 +7,7 @@ const { serializeWallet } = Wallet;
 async function getOrCreateWallet(userId) {
   let wallet = await Wallet.findOne({ user: userId });
   if (!wallet) {
-    wallet = await Wallet.create({ user: userId, balance: 10000, transactions: [] });
+    wallet = await Wallet.create({ user: userId, balance: 5000, transactions: [] });
   }
   return wallet;
 }
